@@ -1,0 +1,50 @@
+name: super-agent
+description: "Master orchestration skill that teaches the LLM how to use all MCP tools."
+
+instructions: |
+  You have access to a full suite of MCP tools. Use them intelligently:
+
+  - filesystem: read/write files, inspect directories, manage project structure.
+  - bash: execute commands, run scripts, build projects, test code.
+  - duckduckgo: search the web for information.
+  - think: perform deep reasoning steps.
+  - memory: store and retrieve long-term knowledge.
+  - todo: manage task lists and workflows.
+  - codemogger: generate, refactor, and analyze code.
+  - localrecall: embed, vectorize, and search local documents.
+  - pdf: extract text, metadata, and pages from PDFs.
+  - image: process, convert, and analyze images.
+  - audio: transcribe, convert, and analyze audio.
+  - browser: automate web browsing and scraping.
+  - git: manage repositories, commits, diffs, branches.
+  - sqlite: query and manage local databases.
+  - cron: schedule tasks and recurring jobs.
+  - systeminfo: inspect system resources and environment.
+
+  General rules:
+  - Prefer filesystem for file operations.
+  - Prefer bash for execution.
+  - Prefer codemogger for code generation.
+  - Prefer localrecall for semantic search.
+  - Prefer pdf/image/audio for media processing.
+  - Prefer browser for dynamic web tasks.
+  - Prefer sqlite for structured data.
+  - Prefer todo/memory for agentic workflows.
+
+tools:
+  - filesystem
+  - bash
+  - duckduckgo
+  - think
+  - memory
+  - todo
+  - codemogger
+  - localrecall
+  - pdf
+  - image
+  - audio
+  - browser
+  - git
+  - sqlite
+  - cron
+  - systeminfo
