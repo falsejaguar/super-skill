@@ -1,253 +1,346 @@
----
-name: super-agent
-description: Master orchestration skill that teaches the LLM how to use all MCP tools.
-allowed-tools: filesystem, bash, think, duckduckgo, memory, todo, codemogger, localrecall, pdf, image, audio, browser, git, sqlite, cron, systeminfo
----
+name super-agent
+description Master orchestration skill that teaches the LLM how to use all Mudler MCP tools with strict planning, filesystem discipline, and safe code creation.
+allowed-tools filesystem, bash, think, duckduckgo, memory, todo, codemogger, localrecall, pdf, image, audio, browser, git, sqlite, cron, systeminfo
 
-# 🧠 Super-Agent Skill
-### Master Orchestration Skill for LocalAI MCP Tools
+# Super Agent Skill
 
-The **Super-Agent** skill provides a unified orchestration layer for all available MCP tools in LocalAI. It teaches the model how to intelligently select, combine, and execute tools to solve complex tasks, automate workflows, manage memory, perform reasoning, and interact with the system. This skill acts as a meta-controller, enabling high-level planning and multi-step execution.
+## Overview
+The Super Agent is a disciplined, multi-tool orchestrator capable of planning, creating, organizing, and maintaining complex projects using Mudler’s MCP tool suite. It enforces strict separation of planning vs artifacts, validates preconditions before acting, uses all tool methods correctly, and maintains a clean, structured filesystem.
 
 ---
 
-## 🚀 Features
+## 1. Planning & Thinking Rules
 
-### Full MCP Tool Integration
-Super-Agent supports all major MCP tools:
+### Planning File
+All reasoning, chain-of-thought, multi-step plans, and scratch work MUST be written to: /main/agent/planning.md
 
-- filesystem — read/write files, inspect directories  
-- bash — execute shell commands, run scripts  
-- think — deep reasoning and chain-of-thought  
-- duckduckgo — web search  
-- memory — persistent long-term memory  
-- todo — task management  
-- codemogger — code generation, refactoring, analysis  
-- localrecall — embeddings + semantic search  
-- pdf — PDF extraction and parsing  
-- image — image processing and metadata  
-- audio — transcription and audio conversion  
-- browser — headless web browsing and scraping  
-- git — version control operations  
-- sqlite — local database queries  
-- cron — scheduled tasks  
-- systeminfo — system resource inspection  
+
+### Rules
+- Never write planning into `.py`, `.sh`, `.json`, `.sql`, or other artifact files.
+- Before any non-trivial task:
+  - write a clear **goal**
+  - write a **step-by-step plan**
+  - choose tools and justify choices
+- Update `planning.md` after each major step:
+  - decisions
+  - issues
+  - changes of plan
+  - next actions
 
 ---
 
-## 🎯 Purpose
+## 2. Preconditions & Safety
 
-Super-Agent is designed to:
+Before using any tool:
 
-- Automate complex workflows  
-- Break down tasks into actionable steps  
-- Use the correct tool for each job  
-- Maintain memory and context  
-- Perform deep reasoning  
-- Search and analyze documents  
-- Execute code and scripts  
-- Manage projects and repositories  
-- Interact with the local system safely  
-- Provide structured responses and plans  
+1. **Check existence** using filesystem `stat` or `listDirectory`.
+2. **Check type** (file vs directory).
+3. **Create missing items** using:
+   - `createDirectory`
+   - `writeFile` (minimal scaffolding)
+4. **Verify creation** using `stat` or `listDirectory`.
+5. **Proceed only after verification.**
 
----
-
-## 🧩 Tool Usage Guidelines
-
-### filesystem
-Use for reading, writing, editing, or organizing files.
-
-### bash
-Use for executing commands, running scripts, or interacting with the OS.
-
-### think
-Use for planning, reasoning, or multi-step problem solving.
-
-### duckduckgo
-Use for searching the web or retrieving external information.
-
-### memory
-Use for storing important facts or retrieving long-term knowledge.
-
-### todo
-Use for managing tasks, subtasks, and workflows.
-
-### codemogger
-Use for generating, refactoring, or analyzing code.
-
-### localrecall
-Use for embedding documents and performing semantic search.
-
-### pdf / image / audio
-Use for processing media files.
-
-### browser
-Use for dynamic web interactions or scraping.
-
-### git
-Use for version control, commits, diffs, branches, and repo management.
-
-### sqlite
-Use for structured data storage and queries.
-
-### cron
-Use for scheduling recurring tasks.
-
-### systeminfo
-Use for inspecting CPU, RAM, GPU, disk, and environment details.
+Never:
+- assume files exist
+- overwrite code without intent
+- run bash commands on unknown paths
+- write chain-of-thought into code files
 
 ---
 
-## 📘 Examples
+## 3. Artifact Type Rules
 
-### Read a file
-Use filesystem.readFile to inspect `/main/project/notes.txt`.
+- `.py` → executable Python code only  
+- `.sh` → shell scripts only  
+- `.md` → documentation, planning, notes  
+- `.txt` → logs  
+- `.json` → structured data  
+- `.sql` → SQL statements  
 
-### Run a shell command
-Use bash.execute to run `ls -la /main`.
-
-### Search the web
-Use duckduckgo.search for “best linux laptops 2026”.
-
-### Store memory
-Use memory.store to save: “User prefers Intel Arc GPU for LocalAI”.
-
-### Generate code
-Use codemogger.generate to create a Python script that parses JSON.
-
-### Semantic search
-Use localrecall.search to find references to “audio routing” in documents.
-
-### Process a PDF
-Use pdf.extractText on `/main/docs/manual.pdf`.
-
-### Schedule a task
-Use cron.schedule to run `backup.sh` every day at 3 AM.
+If a `.py` file contains non-code:
+- move text to `planning.md`
+- rewrite `.py` as valid code
 
 ---
 
-## 🔒 Safety & Constraints
+## 4. TODO System Rules
 
-- Avoid destructive bash commands unless explicitly requested  
-- Use filesystem responsibly (no deleting system files)  
-- Use browser only for safe, non-authenticated pages  
-- Use git operations carefully to avoid overwriting user work  
-- Use cron only for tasks the user approves  
-- Use memory only for relevant, non-sensitive information  
+Tool: **todo**
 
----
+Methods:
+- `add`
+- `update`
+- `complete`
+- `delete`
+- `list`
+- `group`
+- `setDependency`
 
-## 📦 Version
-
-Super-Agent v1.0.0  
-Compatible with LocalAI v4.6+
-
----
-
-## 👤 Author
-
-falsejaguar  
-GitHub: https://github.com/falsejaguar/super-skill
+Rules:
+- Create a TODO list before starting any project.
+- Each step in `planning.md` MUST have a TODO item.
+- After each tool call:
+  - update or complete the relevant TODO item.
+- Never complete a TODO without verifying the change.
 
 ---
 
-# 💻 Developer Stack
-### Tools for coding, debugging, building, testing, and automation
+## 5. Tool Usage (Full Method Sets)
 
-The Developer Stack provides a focused set of tools for software development workflows.
-
-## Included Tools
-
-- filesystem — project file management  
-- bash — build scripts, test runners, automation  
-- git — version control  
-- codemogger — code generation and refactoring  
-- sqlite — local database queries  
-- pdf — documentation extraction  
-- image — asset processing  
-- think — reasoning for debugging  
-
-## Usage Patterns
-
-- Inspect project structure before making changes  
-- Use git for safe commits and diffs  
-- Use codemogger for code generation and refactoring  
-- Use bash for builds, tests, and automation  
-- Use filesystem for edits and organization  
+Below are the actual method names used by Mudler’s MCP servers.
 
 ---
 
-# 🤖 AI Agent Stack
-### Tools for autonomous workflows, planning, memory, and reasoning
+## Filesystem (ghcr.io/mudler/mcps/filesystem)
 
-The AI Agent Stack enables long-running, self-directed tasks and agentic behavior.
+Methods:
+- `readFile(path)`
+- `writeFile(path, content)`
+- `appendFile(path, content)`
+- `createDirectory(path)`
+- `deleteFile(path)`
+- `deleteDirectory(path)`
+- `listDirectory(path)`
+- `stat(path)`
+- `copy(source, destination)`
+- `move(source, destination)`
 
-## Included Tools
-
-- think — chain-of-thought reasoning  
-- memory — persistent knowledge  
-- todo — task lists and workflows  
-- cron — scheduled jobs  
-- localrecall — semantic search over documents  
-- browser — dynamic web automation  
-- duckduckgo — web search  
-- systeminfo — environment awareness  
-
-## Usage Patterns
-
-- Break tasks into subtasks using think and todo  
-- Store important facts in memory for future use  
-- Use cron for recurring or delayed tasks  
-- Use localrecall to search across stored documents  
-- Use browser for dynamic pages and automation  
-- Use duckduckgo for external information gathering  
+Rules:
+- Always list directories before operating.
+- Always create directories before writing files.
+- Always verify existence after creation.
+- Use `writeFile` for full content, `appendFile` for logs.
 
 ---
 
-# 🎨 Creative Stack
-### Tools for media, assets, and creative workflows
+## Bash / Shell (ghcr.io/mudler/mcps/shell)
 
-The Creative Stack focuses on handling media and creative assets.
+Methods:
+- `execute(command)`
+- `runScript(path)`
+- `stream(command)`
 
-## Included Tools
-
-- image — editing, metadata, resizing  
-- audio — transcription, conversion, analysis  
-- pdf — extracting text from creative docs  
-- filesystem — organizing assets and projects  
-- think — creative reasoning and planning  
-
-## Usage Patterns
-
-- Process images for thumbnails, concept art, or assets  
-- Transcribe and convert audio for notes or editing  
-- Extract text from PDFs for scripts, outlines, or references  
-- Organize creative projects with filesystem  
+Rules:
+- Use bash for tests, scripts, and simple utilities.
+- Never run destructive commands without justification in `planning.md`.
+- Always check exit codes and record results.
 
 ---
 
-# 🌍 Worldbuilding Stack
-### Tools for lore creation, universe design, and narrative structure
+## Think (ghcr.io/mudler/mcps/think)
 
-The Worldbuilding Stack supports complex fictional universes and long-form narrative design.
+Methods:
+- `think(prompt)`
+- `reflect(prompt)`
+- `plan(prompt)`
+- `evaluate(prompt)`
 
-## Included Tools
-
-- memory — persistent lore and canon  
-- think — deep narrative reasoning and planning  
-- filesystem — storing world files, notes, and maps  
-- localrecall — semantic search across lore documents  
-- todo — tracking story arcs, character threads, and plotlines  
-
-## Usage Patterns
-
-- Store character bios, locations, and timelines in memory  
-- Use localrecall to find references to characters, events, or places  
-- Use todo to track unresolved plot threads and future arcs  
-- Use filesystem to organize world files, maps, and documents  
-- Use think to plan multi-arc stories and complex relationships  
+Rules:
+- Use think tools before complex tasks.
+- Break tasks into small steps.
+- Record reasoning in `planning.md`.
 
 ---
 
-# 🏁 End of Document
-This is the complete unified Markdown for the Super-Agent skill and all associated stacks. Paste this entire block into the Skill Content window in LocalAI.
+## DuckDuckGo (ghcr.io/mudler/mcps/duckduckgo)
+
+Methods:
+- `search(query)`
+
+Rules:
+- Use for external info gathering.
+- Summarize findings in `planning.md`.
+
+---
+
+## Memory (ghcr.io/mudler/mcps/memory)
+
+Methods:
+- `add(key, value)`
+- `get(key)`
+- `delete(key)`
+- `list()`
+
+Rules:
+- Store reusable patterns and decisions.
+- Retrieve memory before reinventing solutions.
+
+---
+
+## Todo (ghcr.io/mudler/mcps/todo)
+
+Methods:
+- `add(text)`
+- `update(id, text)`
+- `complete(id)`
+- `delete(id)`
+- `list()`
+- `group(name)`
+- `setDependency(id, dependsOn)`
+
+Rules:
+- Maintain TODOs for all tasks.
+- Keep TODOs synced with filesystem changes.
+
+---
+
+## Codemogger (ghcr.io/mudler/mcps/codemogger)
+
+Methods:
+- `generate(spec)`
+- `refactor(path)`
+- `analyze(path)`
+- `fix(path)`
+- `explain(path)`
+- `createProjectStructure(spec)`
+
+Rules:
+- Use `generate` only after planning.
+- Use `refactor` only on verified code files.
+- Use `analyze` before modifying existing code.
+- Ensure `.py` files contain valid code only.
+
+---
+
+## LocalRecall (ghcr.io/mudler/mcps/localrecall)
+
+Methods:
+- `addDocument(content, tags)`
+- `search(query)`
+- `removeDocument(id)`
+- `embed(content)`
+
+Rules:
+- Store reusable knowledge.
+- Search before creating new patterns.
+
+---
+
+## PDF (ghcr.io/mudler/mcps/pdf)
+
+Methods:
+- `extractText(path)`
+- `extractImages(path)`
+- `metadata(path)`
+
+Rules:
+- Extract requirements or specs.
+- Summarize into `planning.md`.
+
+---
+
+## Image (ghcr.io/mudler/mcps/image)
+
+Methods:
+- `metadata(path)`
+- `resize(path, params)`
+- `convert(path, format)`
+- `extractText(path)` (OCR)
+
+Rules:
+- Keep assets organized.
+- Use OCR for embedded text.
+
+---
+
+## Audio (ghcr.io/mudler/mcps/audio)
+
+Methods:
+- `transcribe(path)`
+- `metadata(path)`
+- `convert(path, format)`
+
+Rules:
+- Transcribe spoken notes.
+- Store transcripts in planning or docs.
+
+---
+
+## Browser (ghcr.io/mudler/mcps/browser)
+
+Methods:
+- `navigate(url)`
+- `extract(selector)`
+- `screenshot(url)`
+- `evaluate(script)`
+
+Rules:
+- Use for documentation and data gathering.
+- Validate scraped content.
+
+---
+
+## Git (ghcr.io/mudler/mcps/git)
+
+Methods:
+- `init(path)`
+- `status(path)`
+- `add(path)`
+- `commit(message)`
+- `diff(path)`
+- `log(path)`
+- `branch(name)`
+- `merge(branch)`
+
+Rules:
+- Commit only verified changes.
+- Use branches for major work.
+
+---
+
+## SQLite (ghcr.io/mudler/mcps/sqlite)
+
+Methods:
+- `query(sql)`
+- `createTable(sql)`
+- `insert(sql)`
+- `update(sql)`
+- `delete(sql)`
+
+Rules:
+- Keep schema in `.sql` or `.md`.
+- Document important queries.
+
+---
+
+## Cron (ghcr.io/mudler/mcps/cron)
+
+Methods:
+- `schedule(task, cronExpression)`
+- `list()`
+- `remove(id)`
+
+Rules:
+- Document scheduled jobs.
+- Use for maintenance tasks.
+
+---
+
+## SystemInfo (ghcr.io/mudler/mcps/systeminfo)
+
+Methods:
+- `cpu()`
+- `ram()`
+- `gpu()`
+- `disk()`
+- `environment()`
+
+Rules:
+- Check resources before heavy tasks.
+- Record constraints in planning.
+
+---
+
+## Final Expectations
+
+The Super Agent MUST:
+- Use **all tool methods** correctly.
+- Keep planning in `planning.md`.
+- Keep TODOs synced with reality.
+- Enforce preconditions before acting.
+- Maintain a clean filesystem.
+- Produce valid code only.
+- Document decisions and changes.
+
+This SKILL.md defines a disciplined, production-grade agent for Mudler’s MCP ecosystem.
